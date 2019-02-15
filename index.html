@@ -1,0 +1,990 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Personal Online Savings Account with a Great Rate | FNBO Direct</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="company" content="FNBO Direct, First National Bank of Omaha" />
+    <meta name="product" content="High interest savings account, Online checking account,high performance savings account" />
+    <meta name="keywords" content="FNBODirect,First National Bank of Omaha,high interest,great rate,personal online savings account,mobile banking app,account alerts,no fees,set up recurring deposits">
+    <meta name="description" content="Enjoy a high interest rate for a personal online savings account from FNBO Direct with no fees, account alerts, mobile banking app, and more!">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="scripts/jquery-ui.min.js"></script>
+    <link href="scripts/jquery-ui.min.css" rel="stylesheet" />
+    <script src="scripts/jquery.ui.touch-punch.min.js"></script>
+    <script src="//fast.fonts.net/jsapi/564ec1b5-ad73-4e98-a63e-f1f826f7ec73.js"></script>
+    <link href="css/style.css" rel="stylesheet" />
+    <script>
+        var opPageId = "savings-made-simple.html";
+
+        (function (g, l, d, async, accountId) {
+            if (l.search.match(/[\?&]opDMH\=off/i) || d.cookie.match(/(^|;)\s*opDMH\=off/)) { return false; }
+            var p = "http://by.marketinghub.opentext.com/es/" + accountId + "/c/0/u/customer.global.js",
+                n, b, buster, i, all = [],
+                dmhTest = l.search.match(/[\?&]dmhTest\=([^\?&#]+)/i) || d.cookie.match(/(^|;)\s*dmhTest\=([^;]+)/),
+                asyncTest = l.search.match(/[\?&]opasync\=([^\?&#]+)/i) || d.cookie.match(/(^|;)\s*opasync\=([^;]+)/),
+                esnocache = (!!dmhTest) || l.search.match(/[\?&]opnocache\=([^\?&#]+)/i) || d.cookie.match(/(^|;)\s*opnocache\=([^;]+)/),
+                url;
+            if (dmhTest) {
+                p = p.replace("customer.global.js", "customer.global.test.js");
+            }
+            if (esnocache) {
+                p = p.replace("/es/", "/esnocache/");
+            }
+            buster = l.search.match(/[\?&](dmhBuster\=\w+)/i) || d.cookie.match(/(^|;)\s*(dmhBuster\=\w+)/);
+            if (buster) { p = p + "?" + buster[1]; }
+            g._dmhConfig = g._dmhConfig || {};  // global config flags
+            if (async) { g._dmhConfig.loadAsync = true; }
+            all = [p];
+            for (i = 0; i < all.length; ++i) {
+                url = all[i];
+                if (l.protocol === 'https:') { url = url.replace(/^http\:\/\/by/, "https://secure"); }
+                n = d.createElement("script");
+                n.src = url;
+                if (async) {
+                    b = d.getElementsByTagName("script")[0];
+                    b.parentNode.insertBefore(n, b);
+                } else {
+                    d.write(n.outerHTML + "\n");
+                }
+            }
+            return true;
+        })(window, location, document, false, 1831);
+    </script>
+    <script>
+        var bDone = false;
+        var iPeriodDotL;
+        var iMonths = 45;
+        var iPerMonth = 2500;
+
+        $(document).ready(function () {
+            iPeriodDotL = ($("#PeriodDot").width() / 2);
+            var iLeft = $("#PeriodLine").offset().left;
+            iLeft = iLeft + 51 + iPeriodDotL;
+        })
+
+        $(window).resize(function () {
+            window.status = "w: " + window.innerWidth + ' h: ' + window.innerHeight;
+
+            //fixdots()
+        })
+
+        function CheckWidest() {
+            var maxW = 0;
+            var oMax;
+            var all = document.getElementsByTagName("*"), i = 0, rect, docWidth = document.documentElement.offsetWidth;
+            for (var i = 1; i < all.length; i++) {
+                rect = all[i].getBoundingClientRect();
+                //if (rect.right > docWidth || rect.left < 0) {
+                if (rect.right > maxW && i != 16) {
+                    maxW = rect.right;
+                    oMax = all[i];
+                }
+            }
+        }
+
+
+        $(function () {
+
+            setTimeout("CheckWidest()", 2000);
+            $("#StartingAmount").blur(function () { calcIt() });
+            $("#StartingAmount").change(function () { calcIt() });
+
+            $("#PerMonthDot").draggable({
+                axis: "x", start: function () { },
+                drag: function (event, ui) {
+                    DragAmount(event, ui)
+                },
+                stop: function () { calcIt() }
+            });
+
+            $("#PeriodDot").draggable({
+                axis: "x", grid: [3, 0], start: function () { },
+                drag: function (event, ui) {
+                    DragPeriod(event, ui)
+                },
+                stop: function () { calcIt() }
+            });
+        });
+
+        function DragAmount(event, ui) {
+            var leftPosition = ui.position.left;
+            var iLimitLeft = parseInt($("#PerMonthLine").offset().left - ($("#PerMonthDot").width() / 2));
+            var iLimitRight = parseInt($("#PerMonthLine").offset().left + $("#PerMonthLine").width() - ($("#PerMonthDot").width() / 2));
+            var iPerMonthDot = parseInt($("#PerMonthDot").offset().left);
+            var iAmount = (iPerMonthDot - iLimitLeft) * 10 + 100;
+            iPerMonth = iAmount;
+            $("#PerMonthAmount").html('$' + iAmount)
+            if (leftPosition < iLimitLeft) {
+                ui.position.left = iLimitLeft;
+            }
+            if (leftPosition > iLimitRight) {
+                ui.position.left = iLimitRight;
+            }
+        }
+
+        function DragPeriod(event, ui) {
+            var leftPosition = ui.position.left;
+            var iLimitLeft = parseInt($("#PeriodLine").offset().left - iPeriodDotL);
+            var iLimitRight = parseInt($("#PeriodLine").offset().left + $("#PeriodLine").width() - ($("#PeriodDot").width() / 2));
+            var iPeriodDot = parseInt($("#PeriodDot").offset().left);
+            var iMon = parseInt((iPeriodDot - iLimitLeft) / 3) + 12;
+            iMonths = iMon;
+            var iYears = parseInt(iMon / 12)
+            var iMon = (iMon % 12)
+            var sBack;
+
+            if (iYears < 2) {
+                sBack = iYears + ' YEAR ';
+            }
+            else {
+                sBack = iYears + ' YEARS ';
+            }
+
+            if (iMon == 1) { sBack = sBack + iMon + ' MONTH '; }
+            if (iMon != 1) { sBack = sBack + iMon + ' MONTHS '; }
+            $("#PeriodLength").html(sBack);
+
+            if (leftPosition < iLimitLeft) {
+                ui.position.left = iLimitLeft;
+            }
+            if (leftPosition > iLimitRight) {
+                ui.position.left = iLimitRight;
+            }
+        }
+        function calcIt() {
+            if ($("#StartingAmount").val().length > 0) {
+                var decSavings = Compound(parseInt($("#StartingAmount").val()), iMonths, iPerMonth, $("#SavingsInterestRate").val());
+                $("#FinalSavings").html(formatCurrency(decSavings))
+            }
+        }
+        function formatCurrency(num) {
+            num = num.toString().replace(/\$|\,/g, '');
+            if (isNaN(num)) num = "0";
+            sign = (num == (num = Math.abs(num)));
+            num = Math.floor(num * 100 + 0.50000000001);
+            cents = num % 100;
+            num = Math.floor(num / 100).toString();
+            if (cents < 10) cents = "0" + cents;
+            for (var i = 0; i < Math.floor((num.length - (1 + i)) / 3) ; i++)
+                num = num.substring(0, num.length - (4 * i + 3)) + ',' + num.substring(num.length - (4 * i + 3));
+            return (((sign) ? '' : '-') + '$' + num + '.' + cents);
+        }
+        function Compound(startBalance, monthsToGrow, monthlyContribution, interestRate) {
+            var monthlyRate = interestRate / 100 / 12;
+            for (var i = 0; i < monthsToGrow; i++) {
+                startBalance = startBalance * (1 + monthlyRate) + monthlyContribution;
+            }
+            return Math.round(startBalance * 100) / 100;
+        }
+
+    </script>
+    <style>
+        @font-face {
+            font-family: "AvenirNextLTW01-Regular";
+            src: url("fonts/e9167238-3b3f-4813-a04a-a384394eed42.eot?#iefix");
+            src: url("fonts/e9167238-3b3f-4813-a04a-a384394eed42.eot?#iefix") format("eot"), url("fonts/2cd55546-ec00-4af9-aeca-4a3cd186da53.woff2") format("woff2"), url("fonts/1e9892c0-6927-4412-9874-1b82801ba47a.woff") format("woff"), url("fonts/46cf1067-688d-4aab-b0f7-bd942af6efd8.ttf") format("truetype"), url("fonts/52a192b1-bea5-4b48-879f-107f009b666f.svg#52a192b1-bea5-4b48-879f-107f009b666f") format("svg");
+        }
+
+        @font-face {
+            font-family: "AvenirNextLTW01-Italic";
+            src: url("fonts/d1fddef1-d940-4904-8f6c-17e809462301.eot?#iefix");
+            src: url("fonts/d1fddef1-d940-4904-8f6c-17e809462301.eot?#iefix") format("eot"), url("fonts/7377dbe6-f11a-4a05-b33c-bc8ce1f60f84.woff2") format("woff2"), url("fonts/92b66dbd-4201-4ac2-a605-4d4ffc8705cc.woff") format("woff"), url("fonts/18839597-afa8-4f0b-9abb-4a30262d0da8.ttf") format("truetype"), url("fonts/1de7e6f4-9d4d-47e7-ab23-7d5cf10ab585.svg#1de7e6f4-9d4d-47e7-ab23-7d5cf10ab585") format("svg");
+        }
+
+        @font-face {
+            font-family: "AvenirNextLTW01-Medium";
+            src: url("fonts/1a7c9181-cd24-4943-a9d9-d033189524e0.eot?#iefix");
+            src: url("fonts/1a7c9181-cd24-4943-a9d9-d033189524e0.eot?#iefix") format("eot"), url("fonts/627fbb5a-3bae-4cd9-b617-2f923e29d55e.woff2") format("woff2"), url("fonts/f26faddb-86cc-4477-a253-1e1287684336.woff") format("woff"), url("fonts/63a74598-733c-4d0c-bd91-b01bffcd6e69.ttf") format("truetype"), url("fonts/a89d6ad1-a04f-4a8f-b140-e55478dbea80.svg#a89d6ad1-a04f-4a8f-b140-e55478dbea80") format("svg");
+        }
+
+        @font-face {
+            font-family: "AvenirNextLTW01-MediumI_721278";
+            src: url("fonts/77a9cdce-ea6a-4f94-95df-e6a54555545e.eot?#iefix");
+            src: url("fonts/77a9cdce-ea6a-4f94-95df-e6a54555545e.eot?#iefix") format("eot"), url("fonts/3f380a53-50ea-4a62-95c5-d5d8dba03ab8.woff2") format("woff2"), url("fonts/8344e877-560d-44d4-82eb-9822766676f9.woff") format("woff"), url("fonts/b28b01d9-78c5-46c6-a30d-9a62c8f407c5.ttf") format("truetype"), url("fonts/ed4d3c45-af64-4992-974b-c37cd12a9570.svg#ed4d3c45-af64-4992-974b-c37cd12a9570") format("svg");
+        }
+
+        @font-face {
+            font-family: "Avenir Next LT W01 Demi";
+            src: url("fonts/12d643f2-3899-49d5-a85b-ff430f5fad15.eot?#iefix");
+            src: url("fonts/12d643f2-3899-49d5-a85b-ff430f5fad15.eot?#iefix") format("eot"), url("fonts/aad99a1f-7917-4dd6-bbb5-b07cedbff64f.woff2") format("woff2"), url("fonts/91b50bbb-9aa1-4d54-9159-ec6f19d14a7c.woff") format("woff"), url("fonts/a0f4c2f9-8a42-4786-ad00-fce42b57b148.ttf") format("truetype"), url("fonts/99affa9a-a5e9-4559-bd07-20cf0071852d.svg#99affa9a-a5e9-4559-bd07-20cf0071852d") format("svg");
+        }
+
+        @font-face {
+            font-family: "AvenirNextLTW01-DemiIta";
+            src: url("fonts/770d9a7e-8842-4376-9319-8f2c8b8e880d.eot?#iefix");
+            src: url("fonts/770d9a7e-8842-4376-9319-8f2c8b8e880d.eot?#iefix") format("eot"), url("fonts/687932cb-145b-4690-a21d-ed1243db9e36.woff2") format("woff2"), url("fonts/bc350df4-3100-4ce1-84ce-4a5363dbccfa.woff") format("woff"), url("fonts/bc13ae80-cd05-42b4-b2a9-c123259cb166.ttf") format("truetype"), url("fonts/4862b373-2643-46b1-b0b5-88537c52d15c.svg#4862b373-2643-46b1-b0b5-88537c52d15c") format("svg");
+        }
+
+        @font-face {
+            font-family: "Avenir Next LT W01 Bold";
+            src: url("fonts/dccb10af-07a2-404c-bfc7-7750e2716bc1.eot?#iefix");
+            src: url("fonts/dccb10af-07a2-404c-bfc7-7750e2716bc1.eot?#iefix") format("eot"), url("fonts/14c73713-e4df-4dba-933b-057feeac8dd1.woff2") format("woff2"), url("fonts/b8e906a1-f5e8-4bf1-8e80-82c646ca4d5f.woff") format("woff"), url("fonts/890bd988-5306-43ff-bd4b-922bc5ebdeb4.ttf") format("truetype"), url("fonts/ed104d8c-7f39-4e8b-90a9-4076be06b857.svg#ed104d8c-7f39-4e8b-90a9-4076be06b857") format("svg");
+        }
+
+        h1 {
+            line-height: 1;
+            font-family: 'Avenir Next LT W01 Bold';
+            font-size: 38px;
+        }
+
+        b {
+            font-family: 'Avenir Next LT W01 Bold';
+        }
+
+        #PerMonthLine {
+            border: 2px solid;
+            width: 360px;
+        }
+
+        #PeriodLine {
+            border: 2px solid;
+            width: 360px;
+        }
+
+        .Clear {
+            clear:both;
+        }
+        h2 {
+            line-height: 1;
+            font-size: 16px;
+            font-family: 'Avenir Next LT W01 Bold';
+        }
+
+        .FormTable h2 {
+            font-size: 24px;
+            font-family: 'Avenir Next LT W01 Bold';
+        }
+        h3 {
+            line-height: 1.4166667;
+        }
+
+        .BoilerPlate {font-size:14px;line-height:1.2}
+        .CalcOuterTable {width:100%;min-height:400px;background:url(images/gradient.jpg);background-repeat: repeat-x;}
+        .CalcOuterTable td {width:50%;vertical-align:middle;}
+        .CalcOuterTable td.LeftCell {text-align:right;padding-right:80px;border-radius:0% 5% 5% 0% / 0% 50% 50% 0%;}
+        .CalcOuterTable td:nth-child(2) {text-align:left;}
+        .FormTable {width:413px;margin: auto;margin-right:0px;text-align:center;}
+
+        #SavingsCalculated {display:inline-block;margin:0px;min-width:500px;text-align:center;}
+
+        #ApplyButton {
+            display: inline-block;
+            font-family:"Avenir Next LT W01 Bold";
+            background-color: #D28E00;
+            color: white;
+            padding-top: 2px;
+            font-size: 14px;
+            min-width: 80px;
+            height: 29px;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            width: 120px;
+            text-decoration: none;
+            margin-right: 40px;
+        }
+
+        #ApplyButtonBig {
+            font-family:"Avenir Next LT W01 Bold";
+            display: inline-block;
+            background-color: #D28E00;
+            color: white;
+            font-size: 24px;
+            min-width: 120px;
+            height: 48px;
+            padding-top: 10px;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            width: 100%;
+            margin: auto;
+            text-decoration: none;
+        }
+
+        #ApplyButtonBlue {
+            font-family:"Avenir Next LT W01 Bold";
+            display: inline-block;
+            background-color: #00AEEF;
+            color: white;
+            font-size: 18px;
+            min-width: 100px;
+            height: 42px;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            width: 120px;
+            margin: auto;
+            margin-top:2px;
+            vertical-align:middle !important;
+            text-decoration: none;
+        }
+
+        .SavingsTable {
+            width: 80%;
+            max-width: 1200px;
+            height:100%;
+        }
+
+            .SavingsTable td {
+                text-align: left;
+            }
+
+
+        #MoreStuff {
+            top: 12%;
+            left: 10%;
+            width: auto;
+            max-width: 1000px;
+            text-align: left;
+            color: white;
+            position: absolute;
+            line-height:1.3;
+        }
+
+            #MoreStuff h1 {
+                font-size: 70px;
+            }
+ .Icon {
+            width: 120px;
+            padding: 30px 0px 20px 50px;
+            /* text-align: right !important; */
+            /* padding-left: 34px; */
+            /* padding-right: 4px; */
+            /* height:33%; */
+            /* vertical-align:middle; */
+        }
+
+        /* .Icon:first-child {  height:34% } */
+
+        .MessageCell {
+            /* width: 40%; */
+            padding-right: 20px;
+            padding-left:20px;
+            line-height:1.2;
+            white-space:normal;
+            height: 33%;
+            vertical-align:middle;
+        }
+        
+        
+          .MessageCell:first-child { 
+   height:34%
+} 
+
+        .TRUST h2 {
+            font-size: 60px;
+            margin: 2px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        .SavingsReadyDiv {
+            width: 413px;
+            border: solid 2px #00AEEF;
+            background-color:#FAFEFF;
+            text-align: left;
+            vertical-align: middle;
+            padding: 30px;
+            line-height:1.3;
+             box-shadow: 10px 10px #F5F5F5;
+        }
+
+            .SavingsReadyDiv h2 {
+                font-size: 36px;
+            }
+
+        .TrustTable {
+            max-width: 1300px;
+            width: 92%;
+            margin: auto;
+            padding-bottom: 50px;
+        }
+
+            .TrustTable td {
+                width: 24%;
+                text-align: left;
+                vertical-align: middle;
+                font-size:16px;
+
+            }
+
+                .TrustTable td:nth-child(2) {
+                    width: 30%;
+                }
+
+                .TrustTable td.ImageCell {
+                    width: 120px;
+                    text-align: right;
+                    vertical-align:middle;
+                }
+
+        .TopBar {
+            height: 66px;
+            vertical-align: middle;
+        }
+
+        .TrustTable img {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+
+        #PerMonthDot {
+            cursor: pointer;
+            position: absolute;
+            font-size: 30px;
+            padding: 0px;
+            margin: 0px;
+            margin-top: -16px;
+            margin-left: 0px;
+        }
+
+        #PeriodDot {
+            cursor: pointer;
+            position: absolute;
+            font-size: 30px;
+            padding: 0px;
+            margin: 0px;
+            margin-top: -16px;
+            margin-left: 0px;
+        }
+
+        .triangle-isosceles {
+            position: relative;
+            padding: 15px;
+            margin: 1em 0 3em;
+            color: #000;
+            background: white;
+            cursor: pointer;
+        }
+
+            /* creates triangle */
+            .triangle-isosceles:after {
+                content: "";
+                position: absolute;
+                bottom: -15px; /* value = - border-top-width - border-bottom-width */
+                left: 40%; /* controls horizontal position */
+                border-width: 15px 15px 0; /* vary these values to change the angle of the vertex */
+                border-style: solid;
+                border-color: white transparent;
+                /* reduce the damage in FF3.0 */
+                display: block;
+                width: 0;
+            }
+
+            /* Variant : top
+        ------------------------------------------ */
+
+            .triangle-isosceles.top:after {
+                top: -15px; /* value = - border-top-width - border-bottom-width */
+                right: auto; /* controls horizontal position */
+                bottom: auto;
+                left: 43%;
+                border-width: 0 15px 15px; /* vary these values to change the angle of the vertex */
+                border-color: white transparent;
+            }
+
+            .triangle-isosceles.top2:after {
+                top: -15px; /* value = - border-top-width - border-bottom-width */
+                left: 38%; /* controls horizontal position */
+                bottom: auto;
+                right: auto;
+                border-width: 0 15px 15px; /* vary these values to change the angle of the vertex */
+                border-color: white transparent;
+            }
+
+        #FinalSavings {
+            font-family: "Avenir Next LT W01 Bold";
+            font-size: 56px;
+            font-weight: bold;
+            color: #003455 !important;
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+        }
+
+        #FinalBalanceHeader {
+            font-size: 22px;
+            font-weight: bold;
+            font-family: "Avenir Next LT W01 Bold";
+            color: #003455 !important;
+            margin-bottom: 0px;
+            padding-bottom: 0px;
+        }
+
+        .BlueApplyButton {
+            font-family: "Avenir Next LT W01 Bold";
+            display: inline-block;
+            background-color: #00AEEF;
+            color: white;
+            font-size: 18px;
+            min-width: 100px;
+            padding-top:6px;padding-bottom:6px;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            width: 220px;
+            margin: auto;
+            text-decoration: none;
+        }
+
+        .SpanBold {
+            font-family: "Avenir Next LT W01 Bold";
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        @media (max-width: 1024px) {
+            .MessageCell {
+                width: 50%;
+                margin-right: 5px;
+                padding-top: 5px;
+            }
+
+            h2 {
+                font-size: 38px;
+                line-height: 1.064516;
+            }
+      .TRUST h2 {
+            font-size: 36px;
+            margin: 2px;
+            padding: 2px;
+            margin-bottom: 10px;
+        }
+
+
+            .SavingsReadyDiv {
+                width: 300px;margin:auto;
+            }
+
+                .SavingsReadyDiv h2 {
+                    font-size: 30px;
+                }
+                  #MoreStuff h1 {
+                font-size: 52px;
+            }
+                  #SavingsCalculated {min-width:30%;padding-left:20px;}
+            #FormTable {min-width:70%;
+            }
+            
+
+            #FinalSavings {
+                font-size:40px;
+            }
+        }
+
+        .HeroImage {
+            height: 500px;
+            max-height: 603px;
+            width: 100%;
+            background-size: cover;
+            background-position: 50%;
+            background-image: url(images/FNBO-Direct-Savings.jpg);
+            background-repeat: no-repeat;
+            background-position: left top;
+        }
+
+        @media (min-width: 480px) {
+            h1 {
+                font-size: 22px;
+                line-height: 1.02040816;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+
+            h3 {
+                font-size: 35px;
+                line-height: 1.285714;
+                letter-spacing: 1px;
+                margin-bottom: 27px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            h3 {
+                font-size: 40px;
+                line-height: 1.25;
+                margin-bottom: 14px;
+            }
+        }
+
+        @media (max-width: 850px) {
+            .CalcOuterTable {width:100%;background-image:none;padding:0px;margin:0px;}
+            .CalcOuterTable td{width:100%;text-align:center !important;display:inline-block;border:none;border-radius:0px;padding:0px;margin:0px;}
+            .CalcOuterTable td.LeftCell {padding-right:0px;border:none;border-radius:0px}
+            .FormTable {width:100%;margin: auto;margin-right:0px;text-align:center;}
+
+            .HeroImage {
+                height: 340px;
+                max-width: 850px;
+            }
+
+            .Icon {
+                width: 100%;
+                text-align: center !important;
+                padding-left: 0px;
+                padding-right: 0px;
+            }
+
+            #MoreStuff {
+                width: auto;
+                max-width: 850px;
+                font-size: 14px;
+            }
+
+                #MoreStuff h1 {
+                    font-size: 24px;
+                }
+
+            .SavingsTable {
+                margin:0px;padding:0px;
+                width: 100%;
+                max-width:850px;
+                
+            }
+               .SavingsTable td {
+                    width: 97% !important; margin:0px;padding:0px;
+                    display: block;
+                    text-align: center;
+                }
+
+
+            .SavingReadyCell {
+                text-align: center;
+                width: 100%;
+                padding:0px;margin:0px;
+            }
+            .SavingsReadyDiv {
+                width: 86%;
+                padding:20px;margin:auto;
+                text-align:center;
+                box-shadow: none;
+            }
+
+            .ImageInSavings {
+                margin: 0px;
+                padding: 0px;
+                margin-top: 20px;
+            }
+
+            .TrustTable img {
+                padding-left: 0px !important;
+                padding-right: 0px !important;
+            }
+          
+        }
+
+        @media (max-width: 800px) {
+            .SavingsTable {
+                width: 100%;
+            }
+
+            .TrustTable td {
+                display: inline-table;
+                text-align: center;
+                width: 100% !important;
+            }
+
+            .ImageCell {
+                text-align: center !important;
+                padding-top:45px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .LongLink {
+                font-size: 12px;
+            }
+
+            #MoreStuff {
+                left: 10px;
+                top: 10px;
+            }
+
+            .SavingsTable td {
+                display: inline-table;
+                text-align: center;
+            }
+
+            .SavingsReadyDiv {
+                padding: 5px;
+                width: 99%;
+                border: 0px solid white;
+            }
+
+            .SavingReadyCell {
+                border-bottom: solid 2px #00AEEF;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .HeroImage {
+                height: 420px;
+                max-width: 400px;
+                width: 100%;
+                background-image: url(images/FNBO-Direct-Savings-mobile.jpg);
+            }
+
+            .SavingReadyCell {
+                max-width: 95%;
+            }
+
+            .TrustTable td.ImageCell {
+                width: 100%;
+                text-align: center;
+                padding-top:20px;
+            }
+
+            .TRUST h2 {
+                font-size: 30px;
+            }
+
+            .TRUST {
+                font-size: 14px;
+                width: 100%;
+            }
+
+            #FinalSavings {
+                font-size: 32px;
+            }
+
+            #PerMonthLine {
+                border: 2px solid;
+                width: 280px;
+            }
+
+            #PeriodLine {
+                border: 2px solid;
+                width: 280px;
+            }
+
+            .TopBar {
+                padding: 0px !important;
+                max-width: 400px;
+            }
+
+            .TopBarTable td {
+                width: 50% !important;
+                padding: 0px !important;
+            }
+
+            .TopBarTable img {
+                max-width: 180px;
+            }
+
+            .TopBarTable a {
+                width: 120px;
+            }
+
+            #ApplyButton {
+                margin-right: 15px;
+            }
+
+            #SavingMadeSimple {
+                width: 100%;
+            }
+
+            .SavingsTable {
+                margin: 0px;
+                padding: 0px;
+                overflow: hidden;
+                width: 100% !important;
+            }
+
+            .SavingsReadyDiv {
+                text-align: center;
+                width: 98%;
+                font-size: 12px;
+                padding: 0px;
+                margin: 0px;
+                padding-bottom: 10px;
+            }
+
+                .SavingsReadyDiv h2 {
+                    max-width: 210px;
+                    font-size: 18px;
+                }
+
+            #SavingsThats {
+                max-width: 300px;
+                width: 99% !important;
+            }
+
+            .TopBar {
+                width: 100%;
+                padding: 5px;
+            }
+
+            .BoilerPlate {
+                padding: 0px;
+                margin: 0px;
+                width: 95%;
+                font-size: 14px;
+                padding-top: 15px;
+            }
+
+        }
+        
+    </style>
+</head>
+<body>
+    <input type="hidden" id="SavingsInterestRate" value="2.00" />
+    <input type="hidden" id="InterestDate" value="2/11/2019" />
+    <div class="TopBar Divs">
+        <table class="TopBarTable" style="height:100%;">
+            <tr>
+                <td style="width:100%;text-align:left;padding-left:50px;height:100%;">
+                    <img id="FNBO_Logo" alt="First National Bank of Omaha - FNBO" style="margin-top:10px;margin-left:5px;" src="images/FNBO-Direct.png" />
+                </td>
+                <td>
+                    <a href="https://apply.fnbodirect.com/jsp/oao/relc/cashedge/oao_index.jsp?homeid=99992085" id="ApplyButton" target="_blank">Apply Now</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="SavingMadeSimple" style="border-top:1px solid white;" class="Divs">
+        <div style="position:relative;max-height:603px;width:100%;margin:auto;">
+            <div id="MoreStuff">
+                <h1 style="color:white;margin-bottom:5px;">
+                    SAVING MADE SIMPLE<br />WITH
+                    <script>document.write($("#SavingsInterestRate").val())</script>%<a href="https://www.fnbodirect.com/legal/online-savings-disclosure/index.html" class="Orange" style="text-decoration:none;">*</a> ANNUAL <br />PERCENTAGE YIELD</h1>
+                Access your money anytime, securely, with FNBO&nbsp;Direct.<br />
+                Great rates and convenient access - with no hidden fees.<br /><br />
+                <a href="https://apply.fnbodirect.com/jsp/oao/relc/cashedge/oao_index.jsp?homeid=99992085" target="_blank" class="BlueApplyButton">Apply Now</a>
+            </div>
+            <div class="HeroImage"></div>
+        </div>
+    </div>
+    <br class="Clear" />
+    <div class="Divs SavingsTableDiv">
+        <table class="SavingsTable" >
+            <tr>
+                <td class="SavingReadyCell">
+                    <div class="SavingsReadyDiv">
+                        <h2 id="SavingsThats" class="DarkBlue">Saving That's Ready When You Are.</h2>
+                        Manage your finances online 24/7<br />with FNBO Direct.<br /><br /> Secure, powerful tools available anytime, anywhere. With no hidden fees! <br /><br />
+                        <div id="ApplyButtonDiv" style="width:100%;text-align:center;"><br />
+                            <a href="https://apply.fnbodirect.com/jsp/oao/relc/cashedge/oao_index.jsp?homeid=99992085" id="ApplyButtonBig" target="_blank">Apply Now</a>
+                            <br /><br />
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <table>
+                        <tr>
+                            <td class="Icon"><img alt="Safe Hands On Your Money" class="ImageInSavings" src="images/SafeHandsOnYourMoney.png" /></td>
+                            <td class="MessageCell"><b>Manage</b> and organize your finances, check balances, and pay bills.</td>
+                        </tr>
+                        <tr>
+                            <td class="Icon"><img alt="Online savings" class="ImageInSavings" src="images/FNBO-Direct-Savings-Online.png" /></td>
+                            <td class="MessageCell"><b>Online</b> banking at your fingertips.  Log in on any device.</td>
+                        </tr>
+                        <tr>
+                            <td class="Icon"><img alt="Monitor your savings" class="ImageInSavings" src="images/FNBO-Direct-Monitoring-Your-Savings.png" /></td>
+                            <td class="MessageCell"><b>Monitor</b> your spending, set account alerts, and download activity to Quicken&reg; or QuickBooks&reg;.</td>
+                        </tr>                        
+                    </table>
+                </td>
+                
+        </table>
+    </div>
+    <br class="Clear" /><br />
+    <div class="Divs" style="margin:0px;padding:0px;border:none;border-bottom:4px solid white;">
+        <table class="CalcOuterTable">
+            <tr>
+                <td class="LeftCell LightBlueBk">
+                    <table class="FormTable">
+                        <tr>
+                            <td>
+                                <h2>
+                                    Where Will
+                                    <script>document.write($("#SavingsInterestRate").val())</script>% Take You?
+                                </h2>
+                                <span class="SpanBold">
+                                    Start With This Much
+                                </span>
+                                <input type="text" id="StartingAmount" placeholder="Enter Whole Dollar Amount" style="width:230px;border-color:#c0c0c0;text-align:center;font-size:16px;margin-bottom:15px;height:30px" />
+                                <br />
+                                <span class="SpanBold">
+                                    Add This Much Per Month
+                                </span>
+                                <span>
+                                    <span id="PerMonthDot" class="DarkBlue">
+                                        &bull;<br />
+                                        <div class="triangle-isosceles top2" style="padding:0px;margin:0px;min-width:120px;border:solid 1px #00AEEF;">
+                                            <span style="font-size:22px;padding-left:10px;padding-right:10px;" id="PerMonthAmount">$2500&nbsp;</span>
+                                        </div>
+                                    </span>
+                                    <hr id="PerMonthLine" class="DarkBlue" />
+                                </span>
+                                <br /><br />
+                                <span class="SpanBold">
+                                    Save For This Long
+                                </span>
+                                <span>
+                                    <span id="PeriodDot" class="DarkBlue">
+                                        &bull;<br />
+                                        <div class="triangle-isosceles top" style="border:solid 1px #00AEEF;width:180px;height:50px;background-color:white;padding:0px;margin:0px;">
+                                            <span style="font-size:16px;padding-left:10px;padding-right:4px;" id="PeriodLength">3 YEARS 9 MONTHS</span>
+                                        </div>
+                                    </span>
+                                    <hr id="PeriodLine" class="DarkBlue" />
+                                </span>
+                                <br />
+                            </td>
+                        </tr>
+                    </table><br />
+                </td>
+                <td> 
+                    <span id="SavingsCalculated">
+                        <h4 id="FinalBalanceHeader">YOUR FINAL SAVINGS BALANCE</h4>
+                        <span id="FinalSavings">$116,726.37</span>
+                        <hr class="LightBlue" style="border:1px solid;width:220px" />
+                        <br />
+                        <a href="https://apply.fnbodirect.com/jsp/oao/relc/cashedge/oao_index.jsp?homeid=99992085" class="BlueApplyButton" target="_blank">Apply Now</a>
+                        <br /><br />
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="Divs TRUST" style="line-height:1.3;color:white;background-image:url(images/Trust-Texture.jpg);background-repeat:repeat;text-align:center;border-bottom:5px solid white;">
+        <br /><br /><h2>TRUST YOU CAN BANK ON</h2>
+        We are backed by a strong banking history that dates back over 160 years built <br />
+        on the solid foundation of First&nbsp;National&nbsp;of&nbsp;Nebraska.<br /><br />
+        <hr style="height:3px;width:20%;min-width:150px;background-color:#D28E00;text-align:center;margin:auto;border-width:0px;" />
+        <br /><br />
+        <table class="TrustTable">
+            <tr>
+                <td class="ImageCell"><img alt="Highest in Customer Satisfaction with Retail Banking in the Midwest" src="images/Number_1.png" /></td>
+                <td>
+                    <b>Highest in Customer Satisfaction with Retail Banking in the Midwest.</b>
+                    <br />
+                    J.D. Power 2018 U.S. Retail Banking Satisfaction Study&dagger;
+                </td>
+                <td class="ImageCell"><img alt="160 years of putting our customers and their security first" src="images/FNBO-Direct-Customers-Are-Secure.png" /></td>
+                <td>
+                    <b>Over 160 Years</b><br />Of putting our customers and their security first.
+                </td>
+                <td class="ImageCell"><img alt="Technology Safeguards" src="images/FNBO-Direct-Technology-Safeguards.png" /></td>
+                <td>
+                    <b>Technology Safeguards</b><br />
+                    Encryption technology, Firewalls, User Authentication, Virus Protection
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="Divs" style="background-color: #003455;">
+        <div class="BoilerPlate">
+            &ast;FNBO Direct Online Savings Account Annual Percentage Yield is accurate as of <script>document.write($("#InterestDate").val())</script> and is subject to change after that date.  Rates may also change after the account is opened. Fees may reduce earnings.  Minimum deposit to open an account is $1.00.  Maximum principal deposit balance: $1,000,000.  See the <a href="https://www.fnbodirect.com/legal/online-savings-disclosure/index.html" class="Orange" target="_blank">disclosures</a> for additional information and limitations.
+            <br /><br />
+            &dagger;For J.D. Power 2018 aware information, visit <a class="Orange" href="http://jdpower.com/awards" target="_blank">jdpower.com/awards</a>.
+            <br /><br />
+            Copyright &copy; 2019 First National Bank of Omaha. All Rights Reserved. Deposit Accounts offered by First National Bank of Omaha, Member FDIC. 
+            Deposits are insured to the maximum permitted by law. <br />P.O. Box 3707, Omaha, Nebraska, 68103-0707.<br />
+        </div>
+    </div>
+</body>
+</html>
